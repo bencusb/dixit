@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<title>Dixit</title>
+		<script src="client.js" ></script>
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+	</head>
+	<body class="bg-warning" onload="onLoad()" >
+	  <header>
+		  <nav class="navbar navbar-expand-md navbar-light bg-primary">
+				</button>
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="/">Dixit</a>
+					</li>
+					<li class="nav-item active">
+						<a class="nav-link" href="/rooms">Rooms</a>
+					</li>
+					 <li class="nav-item active">
+						<a class="nav-link" href="/rules">Rules</a>
+					</li>
+				</ul>
+				<form class="form-inline">
+					<input class="form-control mr-2" type="text" placeholder="username" id="username" aria-label="Search"><br>
+					<button class="btn btn-outline-dark" type="button" id="btn" onclick="join()">Join</button>
+				</form>
+			</nav>	
+		</header>	
+		<main role="main" class="container-fluid">
+			<div id="room_data" onload="onLoad()" >
+				<div>
+					<p>Room data</p>
+				</div>
+			</div>
+			<div id="user_data" onload="onLoad()" >
+				<div>
+					<p>User names and status</p>
+				</div>
+			</div>
+			<div id="cards_played" onload="onLoad()" >
+				<div>
+					<p>Cards placed in round</p>
+				</div>
+			</div>
+			<div id="cards_in_hand" class="row" onload="onLoad()" >
+				<div class="col-2">
+					<img class="img-thumbnail" src="\images\Dixit - Odyssey/DO 1.jpg" >
+				</div>
+				<div class="col-2">
+					<img class="img-thumbnail" src="\images\Dixit - Odyssey/DO 2.jpg" >
+				</div>
+				<div class="col-2">
+					<img class="img-thumbnail" src="\images\Dixit - Odyssey/DO 7.jpg" >
+				</div>
+				<div class="col-2">
+					<img class="img-thumbnail" src="\images\Dixit - Odyssey/DO 60.jpg" >
+				</div>
+				<div class="col-2">
+					<img class="img-thumbnail" src="\images\Dixit - Odyssey/DO 46.jpg" >
+				</div>
+				<div class="col-2">
+					<img class="img-thumbnail" src="\images\Dixit - Odyssey/DO 58.jpg" >
+				</div>
+			</div>
+		</main>
+	</body>
+</html>
