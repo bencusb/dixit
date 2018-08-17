@@ -27,11 +27,11 @@ function onLoad()
 	 xmlhttp.onreadystatechange = function()
 	 {
 		if (this.readyState == 4 && this.status == 200) {
-			document.getElementById("room_data").innerHTML =
+			document.getElementById("user_data").innerHTML =
 			this.responseText;
 		}
 	};
-	xmlhttp.open("GET", "TODO", true);
+	xmlhttp.open("GET","load", true);
 	xmlhttp.send();
 }
 
@@ -41,7 +41,7 @@ function join_response()
 	{
 		alert(this.responseText);
 	}
-};
+}
 
 function join()
 {
@@ -53,14 +53,45 @@ function join()
 	xhttp.send();
 }
 
+function start()
+{
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = start_response;
+	xhttp.open("GET", "/start", true);
+	xhttp.send();
+}
+
+function start_response() 
+{
+	if (this.readyState == 4 && this.status == 200) 
+	{
+		alert(this.responseText);
+	}
+}
+
 function tick_response() 
 {
 	if (!(this.readyState == 4 && this.status == 200))
 	{
-		console.log("tick_response error");
+		console.log("tick_response error");		
 		//username = "";
 	}
+	else
+	{
+		game_state = JSON.parse(this.responseText);
+		console.log(game_state);
+		update_viev();
+	}
 };
+
+function update_viev()
+{
+	if(game_state.started == true)
+	{
+		//console.log("dowegethere?");
+		document.getElementById("btn_start").disabled = true;
+	}
+}
 
 function tick()
 {

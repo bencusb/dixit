@@ -3,15 +3,33 @@ var express = require('express');
 var fs = require('fs');
 var server = new express();
 var port = 8080;
+var file = fs.readFileSync('public/cards.json', "utf8");
 
 var game_state = 
 {
-  tick_num: 0,
-  users: {}
+	started : false,
+	tick_num: 0,
+	users: {}
 };
 
 server.use('/', express.static('public'));
 setInterval(on_tick, 3000);
+game_state.cards = JSON.parse(file);
+/*shuffle(game_state.cards.dix1);
+
+function shuffle(a)
+ {
+    var j, x, i;
+	
+    for (i = a.length - 1; i > 0; i--)
+		{
+			j = Math.floor(Math.random() * (i + 1));
+			x = a[i];
+			a[i] = a[j];
+			a[j] = x;
+		}
+    return a;
+}*/
 
 function on_join(req, res)
 {
@@ -36,11 +54,15 @@ function on_join(req, res)
 	//	res.end();
 }
 
-function on_tick()
+function on_start(req, res)
 {
-	var file = fs.readFileSync('public/cards.txt', "utf8");
-	console.log(file);
+	game_state.started = true;
+	console.log("a game has started");
+	res.send("game has started");
+}
 	
+function on_tick()
+{	
 	game_state.tick_num++;
 	console.log(game_state);
 
@@ -69,11 +91,18 @@ function on_beat(req, res)
 	{
 		console.log("beat_error " + name)
 	}
-	res.send("ok");
+	res.send(game_state);
+}
+
+function on_load(req, res)
+{
+	res.send('ok');
 }
 
 server.get('/tick' , on_beat);
 server.get('/join', on_join);
+server.get('/start', on_start);
+server.get('/load', on_load);
 
 server.listen(port);
-console.log("server is running on " + port +"...");
+console.log("server is listening on port " + port +"...");
