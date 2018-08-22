@@ -47,6 +47,18 @@ function on_join(req, res)
 	{
 		res.send(name + " has been registered.");
 		game_state.users[name] = {}
+		for(i = game_state.cards.length; i > i-6; i--)
+		{
+			if(game_state.cards.length => 6)
+			{
+				game_state.users[name].cards = game_state.cards[i];
+				game_state.used = game_state.cards[i];
+			}
+			else
+			{
+				
+			}
+		}
 	}
 	//	values.usernames = name;
 	//	res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -73,6 +85,7 @@ function on_tick()
 			{
 				console.log("Deleting user: " + game_state.users[key]);
 				delete game_state.users[key];
+				game_state.users[key].cards = game_state.cards;
 			}
 		}
 		
