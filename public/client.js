@@ -1,7 +1,7 @@
 username = "";
 game_state = 
 {
-  started: false
+  state: "init"
 }
 
 setInterval(tick, 3000);
@@ -19,21 +19,12 @@ function onLoad()
 	update_viev();
 }
 
-function join_response() 
-{
-	if(this.readyState==4 && this.status==200)
-	{
-		console.log("join_response() called");
-		//alert(this.responseText);
-	}
-}
-
 function join()
 {
 	var xhttp = new XMLHttpRequest();
 	username = document.getElementById("username").value;
 	console.log("sent user=" + username);
-	xhttp.onreadystatechange = join_response;
+	xhttp.onreadystatechange = generic_response;
 	xhttp.open("GET", "/join?username=" + username, true);
 	xhttp.send();
 }
@@ -41,20 +32,12 @@ function join()
 function start()
 {
 	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = start_response;
+	xhttp.onreadystatechange = generic_response;
 	xhttp.open("GET", "/start", true);
 	xhttp.send();
 }
 
-function start_response() 
-{
-	if(this.readyState==4 && this.status==200)
-	{
-		console.log("start_response() called");
-	}
-}
-
-function tick_response() 
+function generic_response() 
 {	
 	if(this.readyState==4 && this.status==200)
 	{
@@ -73,7 +56,14 @@ function tick_response()
 function update_viev()
 {
 	console.log("update_viev() called");
-	if(game_state.started == true)
+	if(game_state.state == "init" )
+	{
+		document.getElementById('user_data').hidden = true;
+		document.getElementById('cards_played').hidden = true;
+		document.getElementById('cards_in_hand').hidden = true;
+		document.getElementById('story').hidden = true;
+	}
+	else
 	{
 		//console.log("dowegethere?");
 		document.getElementById("btn_start").disabled = true;
@@ -89,11 +79,17 @@ function update_viev()
 		document.getElementById('cards_played').hidden = false;
 		document.getElementById('cards_in_hand').hidden = false;
 	}
+	
+	// show or hide the story
+	var s = document.getElementById('story');
+	if(game_state.state == "wait_for_response_cards" )
+	{
+		s.hidden = false;
+		s.innerHTML  = "<p>" + game_state.story + "</p>";
+	}
 	else
-	{		
-		document.getElementById('user_data').hidden = true;
-		document.getElementById('cards_played').hidden = true;
-		document.getElementById('cards_in_hand').hidden = true;
+	{
+		s.hidden = true;		
 	}
 }
 
@@ -102,18 +98,31 @@ function tick()
 	console.log("tick() called, user=" + username);
 	
 	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = tick_response;
+	xhttp.onreadystatechange = generic_response;
 	xhttp.open("GET", "/tick?username=" + username, true);
 	xhttp.send();
 }
 
-function img_clicked()
+function img_clicked(source)
 {
-	var txt;
-    var person = prompt("Please enter your name:", "card 1");
-    if (person == null || person == "") {
-        txt = "Invalid entry please enter(card 1-6)";
-    } else {
-        //todo
-    }
+	if(game_state.state != "wait_for_story" || username != game_state.users_in_playing_order[game_state.story_teller_ind])
+		return;
+	
+	// check if story is valid
+	var story = prompt("Please enter the story:", "Write a story!");
+    if (story==null || story=="") 
+		return;
+	
+	// send story to the server	
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = generic_response;
+	xhttp.open("GET", "/set_story?story=" + story, true);
+	xhttp.send();
+	
+	// place the card
+	card_ind = parseInt(source.id.substring(3,4))-1;	
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = generic_response;
+	xhttp.open("GET", "/place_card?username=" + username + "&card_ind=" + card_ind, true);
+	xhttp.send();
 }

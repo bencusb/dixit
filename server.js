@@ -7,18 +7,19 @@ var file = fs.readFileSync('public/cards.json', "utf8");
 
 var game_state = 
 {
-	started : false,
+	state: "init",
+	cards: [],
 	tick_num: 0,
-	users: {}
+	users: {},
+	users_in_playing_order: [],
+	story: "",
+	story_teller_ind: 0,
+	cards_in_play: []
 };
 
 server.use('/', express.static('public'));
 setInterval(on_tick, 3000);
-
-
 game_state.cards = JSON.parse(file);
-
-shuffle(game_state.cards.dix1);
 
 function shuffle(a)
 {
@@ -57,16 +58,26 @@ function on_join(req, res)
 }
 
 function on_start(req, res)
-{
-	game_state.started = true;
-	console.log("a game has started");
-	res.send("game has started");
-	var value = game_state.users;
+{	
+	game_state.state = "wait_for_story";
 	
+	// shuffle all cards
+	shuffle(game_state.cards.dix1);		
+	
+	// push 6 random cards to each user
+	game_state.users_in_playing_order = [];
 	for (var key in game_state.users)
 	{
 		game_state.users[key].cards = game_state.cards.dix1.splice(0,6);
-	}
+		game_state.users_in_playing_order.push(key);
+	}	
+	
+	// shuffle users
+	shuffle(game_state.users_in_playing_order);
+	game_state.story_teller_ind = 0;
+	
+	console.log("a game has started");
+	res.send(game_state);
 }
 	
 function on_tick()
@@ -99,9 +110,29 @@ function on_beat(req, res)
 	res.send(game_state);
 }
 
+function on_set_story(req, res)
+{
+	console.log("on_set_story() called");
+	game_state.story = req.query.story;	
+	game_state.state = "wait_for_response_cards";
+	res.send(game_state);
+}
+
+function on_place_card(req, res)
+{
+	console.log("on_place_card() called");
+	game_state.cards_in_play.push(game_state.users[req.query.username].cards.splice(req.query.card_ind,1));
+	
+	// TODO: pull new card
+	
+	res.send(game_state);
+}
+
 server.get('/tick' , on_beat);
 server.get('/join', on_join);
 server.get('/start', on_start);
+server.get('/set_story', on_set_story);
+server.get('/place_card', on_place_card);
 
 server.listen(port);
 console.log("server is listening on port " + port +"...");
