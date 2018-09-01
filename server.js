@@ -14,7 +14,8 @@ var game_state =
 	users_in_playing_order: [],
 	story: "",
 	story_teller_ind: 0,
-	cards_in_play: []
+	cards_in_play: [],
+	users_that_placed_card_in_this_round: {}
 };
 
 server.use('/', express.static('public'));
@@ -44,17 +45,13 @@ function on_join(req, res)
 	
 	if(name in game_state.users)
 	{
-		res.send(name + " has been already registered.");	
+		// TODO: error
 	}
 	else
 	{
-		res.send(name + " has been registered.");
 		game_state.users[name] = {}		
+		res.send(game_state);
 	}
-	//	values.usernames = name;
-	//	res.writeHead(200, {'Content-Type': 'text/plain'});
-	//	res.write(req.url);
-	//	res.end();
 }
 
 function on_start(req, res)
@@ -75,6 +72,8 @@ function on_start(req, res)
 	// shuffle users
 	shuffle(game_state.users_in_playing_order);
 	game_state.story_teller_ind = 0;
+	
+	users_that_placed_card_in_this_round = {};
 	
 	console.log("a game has started");
 	res.send(game_state);
@@ -121,9 +120,22 @@ function on_set_story(req, res)
 function on_place_card(req, res)
 {
 	console.log("on_place_card() called");
-	game_state.cards_in_play.push(game_state.users[req.query.username].cards.splice(req.query.card_ind,1));
+	
+	if( !(req.query.username in game_state.users_that_placed_card_in_this_round) )
+	{
+		game_state.cards_in_play.push(game_state.users[req.query.username].cards.splice(req.query.card_ind,1));
+		game_state.users_that_placed_card_in_this_round[req.query.username] = 0;
+		
+		if(Object.keys(game_state.users_that_placed_card_in_this_round).length == Object.keys(game_state.users).length)
+		{
+			// evrybody placed the card
+			shuffle(game_state.cards_in_play);
+			game_state.state = "voting";
+		}
+	}
 	
 	// TODO: pull new card
+	//game_state.users[rec.query,username].cards[rec.query.card_ind] = splice(game_state.cards,1);
 	
 	res.send(game_state);
 }
