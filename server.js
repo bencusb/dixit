@@ -3,7 +3,6 @@ var express = require('express');
 var fs = require('fs');
 var server = new express();
 var port = 8080;
-var file = fs.readFileSync('public/cards.json', "utf8");
 
 var game_state = 
 {
@@ -15,12 +14,11 @@ var game_state =
 	story: "",
 	story_teller_ind: 0,
 	cards_in_play: [],
-	users_that_placed_card_in_this_round: {}
+	votes: 0
 };
 
 server.use('/', express.static('public'));
 setInterval(on_tick, 3000);
-game_state.cards = JSON.parse(file);
 
 function shuffle(a)
 {
@@ -49,32 +47,39 @@ function on_join(req, res)
 	}
 	else
 	{
-		game_state.users[name] = {}		
+		game_state.users[name] = {score: 0}
 		res.send(game_state);
 	}
 }
 
 function on_start(req, res)
 {	
-	game_state.state = "wait_for_story";
-	
+    // read cards
+    var file = fs.readFileSync('public/cards.json', "utf8");
+    game_state.cards = JSON.parse(file);
+		
 	// shuffle all cards
 	shuffle(game_state.cards.dix1);		
 	
 	// push 6 random cards to each user
 	game_state.users_in_playing_order = [];
-	for (var key in game_state.users)
+	for (var user in game_state.users)
 	{
-		game_state.users[key].cards = game_state.cards.dix1.splice(0,6);
-		game_state.users_in_playing_order.push(key);
+		game_state.users[user].cards = game_state.cards.dix1.splice(0,6);
+		game_state.users[user].played_card = null;
+		game_state.users[user].vote = null;
+		game_state.users_in_playing_order.push(user);
 	}	
 	
 	// shuffle users
 	shuffle(game_state.users_in_playing_order);
 	game_state.story_teller_ind = 0;
+
+    // remove used cards
+	game_state.cards_in_play = [];	
+	game_state.votes = 0;
 	
-	users_that_placed_card_in_this_round = {};
-	
+	game_state.state = "wait_for_story";
 	console.log("a game has started");
 	res.send(game_state);
 }
@@ -121,12 +126,14 @@ function on_place_card(req, res)
 {
 	console.log("on_place_card() called");
 	
-	if( !(req.query.username in game_state.users_that_placed_card_in_this_round) )
+	var user = game_state.users[req.query.username];	
+	if( user.played_card == null )
 	{
-		game_state.cards_in_play.push(game_state.users[req.query.username].cards.splice(req.query.card_ind,1));
-		game_state.users_that_placed_card_in_this_round[req.query.username] = 0;
+		card = user.cards.splice(req.query.card_ind,1)[0];
+		game_state.cards_in_play.push(card);
+		user.played_card = card;
 		
-		if(Object.keys(game_state.users_that_placed_card_in_this_round).length == Object.keys(game_state.users).length)
+		if(game_state.cards_in_play.length == Object.keys(game_state.users).length)
 		{
 			// evrybody placed the card
 			shuffle(game_state.cards_in_play);
@@ -140,11 +147,63 @@ function on_place_card(req, res)
 	res.send(game_state);
 }
 
+function on_vote(req, res)
+{	
+	console.log("on_vote() called");
+	var user_num = Object.keys(game_state.users).length;
+	var user = game_state.users[req.query.username];	
+	if( user.vote == null )
+	{		
+        user.vote = game_state.cards_in_play[req.query.card_ind];
+		game_state.votes++;
+		
+		if(game_state.votes == user_num-1)
+		{
+			// evrybody has voted
+			
+			// scoring			
+			var story_teller = game_state.users_in_playing_order[game_state.story_teller_ind];			
+			var matches = 0;
+			for (var user in game_state.users)
+			{
+				if( user.vote == game_state.users[story_teller].played_card )
+					matches++;
+			}
+			console.log("matches=" + matches);
+			
+			/*if( matches > 0 && matches < user_num-1 )
+			{
+				// storyteller win
+				game_state.users[story_teller].score += 2;
+			}
+			else
+			{
+			}*/							
+			
+			// prepare  next round
+			game_state.story = "";
+			game_state.story_teller_ind = (game_state.story_teller_ind + 1) % user_num;
+			game_state.cards_in_play = [];	
+			game_state.votes = 0;	
+			for (var user in game_state.users)
+			{
+				game_state.users[user].cards.push(game_state.cards.dix1.splice(0,1)[0]);
+				game_state.users[user].played_card = null;
+				game_state.users[user].vote = null;
+			}				
+			game_state.state = "wait_for_story";
+		}
+	}
+	
+	res.send(game_state);
+}
+
 server.get('/tick' , on_beat);
 server.get('/join', on_join);
 server.get('/start', on_start);
 server.get('/set_story', on_set_story);
 server.get('/place_card', on_place_card);
+server.get('/vote', on_vote);
 
 server.listen(port);
 console.log("server is listening on port " + port +"...");

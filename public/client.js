@@ -9,7 +9,6 @@ game_state =
 	story: "",
 	story_teller_ind: 0,
 	cards_in_play: [],
-	users_that_placed_card_in_this_round: {}
 }
 
 setInterval(tick, 3000);
@@ -93,7 +92,7 @@ function update_viev()
 	var cards = game_state.users[username].cards;
 	for(i=0; i<6; i++)
 	{
-		var card = document.getElementById("img"+(i+1));
+		var card = document.getElementById("card_in_hand"+(i+1));
 		if( i<cards.length )
 		{
 			card.hidden = false;
@@ -129,14 +128,14 @@ function update_viev()
 	
 	// show or hide the story
 	var s = document.getElementById('story');
-	if(game_state.state == "wait_for_response_cards" )
+	if(game_state.state != "wait_for_story" )
 	{
 		s.hidden = false;
 		s.innerHTML  = "<p>" + game_state.story + "</p>";
 	}
 	else
 	{
-		s.hidden = true;		
+		s.hidden = true;
 	}
 }
 
@@ -146,9 +145,9 @@ function tick()
 	call_server("/tick?username=" + username);
 }
 
-function img_clicked(source)
+function card_in_hand_clicked(source)
 {
-	card_ind = parseInt(source.id.substring(3,4))-1;
+	card_ind = parseInt(source.id.substring(12,13))-1;
 	if( game_state.state == "wait_for_story" && am_I_the_story_teller() )
 	{
 		var story = prompt("Please enter the story:", "Write a story!");
@@ -163,4 +162,12 @@ function img_clicked(source)
 	{
 		call_server("/place_card?username=" + username + "&card_ind=" + card_ind);
 	}	
+}
+
+function card_played_clicked(source)
+{
+	if( game_state.state != "voting" && am_I_the_story_teller() )
+		return;	
+	card_ind = parseInt(source.id.substring(12,13))-1;
+	call_server("/vote?username=" + username + "&card_ind=" + card_ind);
 }
