@@ -48,6 +48,7 @@ function on_join(req, res)
 	else
 	{
 		game_state.users[name] = {score: 0}
+		game_state.users_in_playing_order.push(name);
 		res.send(game_state);
 	}
 }
@@ -151,7 +152,7 @@ function on_vote(req, res)
 {	
 	console.log("on_vote() called");
 	var user_num = Object.keys(game_state.users).length;
-	var user = game_state.users[req.query.username];	
+	var user = game_state.users[req.query.username];
 	if( user.vote == null )
 	{		
         user.vote = game_state.cards_in_play[req.query.card_ind];
@@ -164,22 +165,38 @@ function on_vote(req, res)
 			// scoring			
 			var story_teller = game_state.users_in_playing_order[game_state.story_teller_ind];			
 			var matches = 0;
-			for (var user in game_state.users)
+			for (var u in game_state.users)
 			{
-				if( user.vote == game_state.users[story_teller].played_card )
+				if( game_state.users[u].vote == game_state.users[story_teller].played_card )
 					matches++;
 			}
-			console.log("matches=" + matches);
 			
-			/*if( matches > 0 && matches < user_num-1 )
+			if( matches > 0 && matches < user_num-1 )
 			{
 				// storyteller win
-				game_state.users[story_teller].score += 2;
+				game_state.users[story_teller].score += 3;
+				for (var u in game_state.users)
+					if( game_state.users[u].vote == game_state.users[story_teller].played_card )
+						game_state.users[u].score += 3;
 			}
 			else
 			{
-			}*/							
+				// storyteller lost
+				for (var u in game_state.users)
+					if( u != story_teller )
+						game_state.users[u].score += 2;
+			}
 			
+			// fakes
+			for (var u1 in game_state.users)
+			{
+				for (var u2 in game_state.users)
+				{
+					if( u2 != story_teller && game_state.users[u1].vote == game_state.users[u2].played_card )
+						game_state.users[u2].score++;						
+				}				
+			}
+						
 			// prepare  next round
 			game_state.story = "";
 			game_state.story_teller_ind = (game_state.story_teller_ind + 1) % user_num;

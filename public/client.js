@@ -73,24 +73,44 @@ function update_viev()
 {
 	console.log("update_viev() called");
 	
+	// show users
+	for(var i=0; i<game_state.users_in_playing_order.length; i++)
+	{
+		var user = game_state.users_in_playing_order[i];
+		var story_teller = game_state.users_in_playing_order[game_state.story_teller_ind];
+		document.getElementById("user_tag" + i).innerText = "| " + user + ": ";
+		document.getElementById("user_score" + i).innerText = game_state.users[user].score + " |";
+		if(user == story_teller)
+		{
+			document.getElementById("user_tag" + i).style.color = "#6ef209";
+		}
+		else
+		{
+			document.getElementById("user_tag" + i).style.color = "#E2C750";
+		}
+	}
+	
 	if(game_state.state == "init" )
 	{
-		document.getElementById('user_data').hidden = true;
+		//document.getElementById('user_data').hidden = true;
 		document.getElementById('cards_played').hidden = true;
 		document.getElementById('cards_in_hand').hidden = true;
 		document.getElementById('story').hidden = true;
+		document.getElementById("room_data").hidden = false;
 		return;
 	}
 	
 		
 	//console.log("dowegethere?");
 	document.getElementById("btn_start").disabled = true;
+	document.getElementById("room_data").hidden = true;
 	//console.log("username="+username);
+
 	
 	// show cards in hand
 	document.getElementById('user_data').hidden = false;
 	var cards = game_state.users[username].cards;
-	for(i=0; i<6; i++)
+	for(var i=0; i<6; i++)
 	{
 		var card = document.getElementById("card_in_hand"+(i+1));
 		if( i<cards.length )
@@ -131,7 +151,7 @@ function update_viev()
 	if(game_state.state != "wait_for_story" )
 	{
 		s.hidden = false;
-		s.innerHTML  = "<p>" + game_state.story + "</p>";
+		s.innerHTML  = "Story: " + game_state.story;
 	}
 	else
 	{

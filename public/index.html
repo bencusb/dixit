@@ -3,82 +3,89 @@
 		<title>Dixit</title>
 		<script src="client.js" ></script>
 		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+		
+		<style type="text/css">
+			body { background: #FBAF45 !important; }
+			#user_info_tab { background: #6094A6 !important; }
+			#room_data { background: #2B4D7F !important; }
+			#user_data { background: #2B4D7F !important; }
+		</style>
+		
 	</head>
-	<body class="bg-warning" onload="onLoad()" >
-	  <header>
-		  <nav class="navbar navbar-expand-md navbar-light bg-primary">
-				</button>
-				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
-						<a class="nav-link" href="/">Dixit</a>
-					</li>
-					<li class="nav-item active">
-						<a class="nav-link" href="/rooms">Rooms</a>
-					</li>
-					 <li class="nav-item active">
-						<a class="nav-link" href="/rules">Rules</a>
-					</li>
-				</ul>
-				<form class="form-inline">
-					<input class="form-control mr-2" type="text" placeholder="username" id="username" aria-label="Search"><br>
-					<button class="btn btn-outline-dark mr-2" type="button" id="btn" onclick="join()">Join</button>
-				</form>
-			</nav>	
-		</header>	
+	<body onload="onLoad()" >
 		<main role="main" class="container-fluid">
-			<div id="room_data" onload="start()" >
-				<div>
-					<p>Room data</p>
-					<button class="btn btn-outline-dark" type="button" id="btn_start" onclick="start()">Start</button>
-				</div>
-			</div>
-			<div id="user_data" onload="onLoad()" >
-				<div>
-					<p>User names and status</p>
-				</div>
-			</div>
-			<div id="cards_played" class="row pb-2" onload="update_view()" >
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play1" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play2" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play3" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play4" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play5" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play6" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-			</div>
-			<div onload="onLoad()" >
-				<div id="story">
-				</div>
-			</div>			
-			<div id="cards_in_hand" class="row" onload="update_view()" >
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand1" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand2" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand3" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand4" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
-				</div>
-				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand5" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+			<div class="row">
+				<div class="col-10">
+				
+					<h1 id="story" style="color:#2B4D7F " ></h1>
+				
+					<div id="cards_played" class="row pb-2 pt-2" onload="update_view()" >
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play1" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play2" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play3" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play4" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play5" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_played_clicked(this)" id="card_in_play6" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+					</div>
+					
+					<div id="cards_in_hand" class="row pt-2" onload="update_view()" >
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand1" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand2" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand3" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand4" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand5" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+						<div class="col-2">
+							<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand6" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+						</div>
+					</div>
 				</div>
 				<div class="col-2">
-					<img class="h-25 img-thumbnail" onclick="card_in_hand_clicked(this)" id="card_in_hand6" src="\images\cards\Dixit - Odyssey/DO cover.jpg" >
+					<div class="row rounded-left border-dark mb-1" id="user_info_tab">
+						<h1 class="mx-auto" style="color:#FBAF45 " >Dixit</h1>
+						<form class="form-inline">
+							<input class="form-control m-2" type="text" placeholder="username" id="username" aria-label="Search"><br>
+							<button class="btn btn-outline-warning mt-2 ml-2" type="button" id="btn" onclick="join()">Join</button>
+						</form>
+					</div>
+					<div class="row rounded-left border-dark mb-1 mt-1" id="room_data">
+						<button class="btn btn-outline-warning mx-auto m-2" type="button" id="btn_start" onclick="start()">Start</button>
+					</div>
+					<div class="row rounded-left border-dark mt-1" id="user_data">
+							<h4 class="p-1" style="color:#E2C750" id="user_tag0" ></h4>
+							<h4 class="p-1" style="color:#59D2CD " id="user_score0" ></h4>
+							<h4 class="mx-auto p-1" style="color:#E2C750" id="user_tag1" ></h4>
+							<h4 class="mx-auto p-1" style="color:#59D2CD " id="user_score1" ></h4><br>
+							<h4 class="mx-auto p-1" style="color:#E2C750" id="user_tag2" ></h4>
+							<h4 class="mx-auto p-1" style="color:#59D2CD " id="user_score2" ></h4><br>
+							<h4 class="mx-auto p-1" style="color:#E2C750" id="user_tag3" ></h4>
+							<h4 class="mx-auto p-1" style="color:#59D2CD " id="user_score3" ></h4><br>
+							<h4 class="mx-auto p-1" style="color:#E2C750" id="user_tag4" ></h4>
+							<h4 class="mx-auto p-1" style="color:#59D2CD " id="user_score4" ></h4><br>
+							<h4 class="mx-auto p-1" style="color:#E2C750" id="user_tag5" ></h4>
+							<h4 class="mx-auto p-1" style="color:#59D2CD " id="user_score5" ></h4><br>
+					</div>
 				</div>
 			</div>
 		</main>
